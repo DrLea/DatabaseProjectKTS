@@ -26,7 +26,9 @@ class Content(models.Model):
     name = models.CharField(max_length=20)
     description = models.TextField()
     image = models.ImageField(upload_to='.images/')
+    tag = models.TextField(max_length=20, null=True)
     isApproved = models.BooleanField(default=False)
+    
 
     def __str__(self) -> str:
         return f'{self.name} - {self.isApproved}'

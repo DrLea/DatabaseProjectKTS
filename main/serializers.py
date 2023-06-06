@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Content
-        fields = ['id', 'user_id', 'name', 'description', 'image', 'isApproved']
+        fields = ['id', 'user_id', 'name', 'description', 'image', 'isApproved', 'tag']
 
     
 class _ContentSerializer(serializers.ModelSerializer):
