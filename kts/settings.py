@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 
 import dj_database_url
-import yaml
+# import yaml
 from pathlib import Path
 from datetime import timedelta
 
@@ -89,8 +89,8 @@ WSGI_APPLICATION = "kts.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-with open("kts/.config.yaml") as f:
-    config = yaml.safe_load(f)
+# with open("kts/.config.yaml") as f:
+#     config = yaml.safe_load(f)
 
 
 # DATABASES = {
