@@ -64,6 +64,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
 
     ),
+
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 ROOT_URLCONF = "kts.urls"
