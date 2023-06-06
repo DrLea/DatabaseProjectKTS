@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
+
+import dj_database_url
 import yaml
 from pathlib import Path
 from datetime import timedelta
@@ -24,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-vad9g+un$%&z2zw0nd)d0dovz583@%)u0y#(oppq&vl2u*xu50"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -90,8 +93,12 @@ with open("kts/.config.yaml") as f:
     config = yaml.safe_load(f)
 
 
+# DATABASES = {
+#     'default': config['default']
+# }
+
 DATABASES = {
-    'default': config['default']
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
 
