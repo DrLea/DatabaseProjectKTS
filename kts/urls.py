@@ -19,7 +19,23 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from rest_framework.documentation import include_docs_urls
 
+
+### for deploy 
+from django.urls import re_path
+from django.conf import settings
+
+from django.views.static import serve
+##########################
+
+
 urlpatterns = [
+    ########### for deploy
+        re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
+
+        re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
+    ################################
+
+
     path("kts/", include("main.urls")),
     path("admin/", admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
