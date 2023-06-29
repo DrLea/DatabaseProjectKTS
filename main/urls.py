@@ -20,4 +20,5 @@ urlpatterns = [
     path('content/podcast/<int:pk>/', PodcastRetrieveUpdateDestroyView.as_view(), name='podcast_retrieve_update_destroy'),
     path('comments', CommentListCreateView.as_view(), name='comment_list_create'),
     path('comment/<int:pk>/', CommentRetrieveUpdateDestroyView.as_view(), name='comment_retrieve_update_destroy'),
+    path('comment/for_content/<int:content_id>/', CommentListByContentIDView.as_view(), name='comment_list_by_content_id'),
 ]
