@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import *
 
+from django.utils.timezone import now
+
 
 class InterestSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,22 +20,23 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ContentSerializer(serializers.ModelSerializer):
-    user_id = serializers.ReadOnlyField(default=serializers.CurrentUserDefault())
-    isApproved = serializers.ReadOnlyField(source="user_id.is_staff")
-    date = serializers.ReadOnlyField()
+    isApproved = serializers.ReadOnlyField(default=False)
+    date = serializers.ReadOnlyField(default=now())
 
     class Meta:
         model = Content
-        fields = ['id', 'user_id', 'name', 'description', 'image', 'isApproved', 'tag', 'date']
+        fields = ['id', 'name', 'description', 'image', 'isApproved', 'tag', 'date']
 
 
-class _ContentSerializer(ContentSerializer):
-    date = serializers.DateTimeField(default=serializers.DateTimeField())
+class _ContentSerializer(serializers.ModelSerializer):
+    content = ContentSerializer(source='content_id', read_only=False)
+
+    class Meta:
+        model = Content
+        fields = ['content', 'user']
 
     def create(self, validated_data):
-        content_data = {}
-        for field in super().fields:
-            content_data[field] = validated_data.pop(field)
+        content_data = validated_data.pop('content_id')
         content = Content.objects.create(**content_data)
         instance = self.Meta.model.objects.create(content_id=content, **validated_data)
         return instance
@@ -48,49 +51,54 @@ class _ContentSerializer(ContentSerializer):
         return instance
 
 
-
 class EventSerializer(_ContentSerializer):
     location = serializers.URLField()
+    user = serializers.ReadOnlyField(source='user.id')
 
     class Meta(_ContentSerializer.Meta):
         model = Event
-        fields = _ContentSerializer.Meta.fields + ['location']
+        fields = _ContentSerializer.Meta.fields + ['location', 'id']
 
 
 class BookSerializer(_ContentSerializer):
     source = serializers.FileField()
-    user_id = serializers.ReadOnlyField(source='user_id.id')
+    user = serializers.ReadOnlyField(source='user.id')
 
     class Meta(_ContentSerializer.Meta):
         model = Book
-        fields = _ContentSerializer.Meta.fields + ['source']
+        fields = _ContentSerializer.Meta.fields + ['source', 'id']
 
 
 class VideoSerializer(_ContentSerializer):
     source = serializers.FileField()
+    user = serializers.ReadOnlyField(source='user.id')
 
     class Meta(_ContentSerializer.Meta):
         model = Video
-        fields = _ContentSerializer.Meta.fields + ['source']
+        fields = _ContentSerializer.Meta.fields + ['source', 'id']
 
 
 class FileSerializer(_ContentSerializer):
     file = serializers.FileField()
+    user = serializers.ReadOnlyField(source='user.id')
 
     class Meta(_ContentSerializer.Meta):
         model = File
-        fields = _ContentSerializer.Meta.fields + ['file']
+        fields = _ContentSerializer.Meta.fields + ['file', 'id']
 
 
 class PodcastSerializer(_ContentSerializer):
     file = serializers.FileField()
+    user = serializers.ReadOnlyField(source='user.id')
 
     class Meta(_ContentSerializer.Meta):
         model = Podcast
-        fields = _ContentSerializer.Meta.fields + ['file']
+        fields = _ContentSerializer.Meta.fields + ['file', 'id']
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user_id = serializers.ReadOnlyField(source='user_id.id')
+
     class Meta:
         model = Comment
         fields = ['id', 'user_id', 'content_id', 'text']

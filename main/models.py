@@ -85,7 +85,6 @@ class Interest(models.Model):
 
 # CONTENT
 class Content(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=20)
     description = models.TextField()
     image = models.ImageField(upload_to='.images/cover_pages/', null=True, blank=True)
@@ -101,6 +100,7 @@ class Content(models.Model):
 
 class _Content(models.Model):
     content_id = models.ForeignKey(Content, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 
     def __str__(self) -> str:
