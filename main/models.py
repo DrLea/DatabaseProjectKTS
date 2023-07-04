@@ -115,11 +115,11 @@ class Event(_Content):
 
 
 class Book(_Content):
-    source = models.FileField(upload_to="files/books/")
+    source = models.FileField(upload_to=".files/books/")
 
 
 class Video(_Content):
-    source = models.FileField(upload_to="files/videos/")
+    source = models.FileField(upload_to=".files/videos/")
 
 
 class File(_Content):

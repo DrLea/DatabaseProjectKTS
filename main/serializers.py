@@ -36,8 +36,12 @@ class _ContentSerializer(serializers.ModelSerializer):
         fields = ['content', 'user']
 
     def create(self, validated_data):
+        print(validated_data)
         content_data = validated_data.pop('content_id')
         content = Content.objects.create(**content_data)
+        user = validated_data["user"]
+        content.isApproved = user.is_staff
+        content.save()
         instance = self.Meta.model.objects.create(content_id=content, **validated_data)
         return instance
 
@@ -67,6 +71,7 @@ class BookSerializer(_ContentSerializer):
     class Meta(_ContentSerializer.Meta):
         model = Book
         fields = _ContentSerializer.Meta.fields + ['source', 'id']
+
 
 
 class VideoSerializer(_ContentSerializer):
