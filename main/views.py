@@ -1,8 +1,7 @@
 from rest_framework import generics
-from .models import *
 from .permissions import IsOwnerOrAdmin, IsAdminOrReadOnly
 from .serializers import *
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 
 
 
@@ -10,13 +9,28 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            # If the user is a superuser, return the full queryset
+            return super().get_queryset()
+        else:
+            # If the user is not a superuser, return an empty queryset
+            return User.objects.none()
 
 
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Allow only staff and the user who created the instance
+            self.permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
+        else:
+            # Allow read-only access for unauthenticated users
+            self.permission_classes = [IsAuthenticatedOrReadOnly]
+        return super().get_permissions()
 
 
 

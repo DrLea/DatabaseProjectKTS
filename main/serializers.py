@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 
 from django.utils.timezone import now
+from django.contrib.auth.hashers import make_password
 
 
 class InterestSerializer(serializers.ModelSerializer):
@@ -16,7 +17,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['nickname', 'email', 'image', 'age', 'interests', 'description']
+        fields = ['nickname', 'email', 'password', 'image', 'age', 'interests', 'description']
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        password = make_password(password)
+        instance = self.Meta.model.objects.create(password=password, **validated_data)
+        return instance
 
 
 class ContentSerializer(serializers.ModelSerializer):
@@ -36,7 +43,6 @@ class _ContentSerializer(serializers.ModelSerializer):
         fields = ['content', 'user']
 
     def create(self, validated_data):
-        print(validated_data)
         content_data = validated_data.pop('content_id')
         content = Content.objects.create(**content_data)
         user = validated_data["user"]
