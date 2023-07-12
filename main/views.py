@@ -1,7 +1,13 @@
 from rest_framework import generics
 from .permissions import IsOwnerOrAdmin, IsAdminOrReadOnly
 from .serializers import *
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser, AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+
+#TOKEN
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainSerializer
 
 
 
@@ -58,6 +64,14 @@ class EventRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             self.permission_classes = [IsAuthenticatedOrReadOnly]
         return super().get_permissions()
 
+class EventListOfUserView(generics.ListAPIView):
+    serializer_class = EventSerializer
+
+    def get_queryset(self):
+        return Event.objects.filter(user = self.kwargs['user_id'])
+
+
+
 
 
 #BOOK
@@ -82,6 +96,12 @@ class BookRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             # Allow read-only access for unauthenticated users
             self.permission_classes = [IsAuthenticatedOrReadOnly]
         return super().get_permissions()
+
+class BookListOfUserView(generics.ListAPIView):
+    serializer_class = BookSerializer
+
+    def get_queryset(self):
+        return Book.objects.filter(user = self.kwargs['user_id'])
 
 
 #VIDEO
@@ -109,6 +129,12 @@ class VideoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             self.permission_classes = [IsAuthenticatedOrReadOnly]
         return super().get_permissions()
 
+class VideoListOfUserView(generics.ListAPIView):
+    serializer_class = VideoSerializer
+
+    def get_queryset(self):
+        return Video.objects.filter(user = self.kwargs['user_id'])
+
 #FILE
 class FileListCreateView(generics.ListCreateAPIView):
     queryset = File.objects.all()
@@ -133,6 +159,12 @@ class FileRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             # Allow read-only access for unauthenticated users
             self.permission_classes = [IsAuthenticatedOrReadOnly]
         return super().get_permissions()
+
+class FileListOfUserView(generics.ListAPIView):
+    serializer_class = FileSerializer
+
+    def get_queryset(self):
+        return File.objects.filter(user = self.kwargs['user_id'])
 
 #PODCAST
 class PodcastListCreateView(generics.ListCreateAPIView):
@@ -159,6 +191,12 @@ class PodcastRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             self.permission_classes = [IsAuthenticatedOrReadOnly]
         return super().get_permissions()
 
+class PodcastListOfUserView(generics.ListAPIView):
+    serializer_class = PodcastSerializer
+
+    def get_queryset(self):
+        return Podcast.objects.filter(user = self.kwargs['user_id'])
+
 
 #COMMENT
 class CommentListCreateView(generics.ListCreateAPIView):
@@ -183,6 +221,12 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             # Allow read-only access for unauthenticated users
             self.permission_classes = [IsAuthenticatedOrReadOnly]
         return super().get_permissions()
+
+class CommentListOfUserView(generics.ListAPIView):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        return Comment.objects.filter(user_id = self.kwargs['user_id'])
 
 class CommentListByContentIDView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer

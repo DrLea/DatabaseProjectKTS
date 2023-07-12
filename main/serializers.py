@@ -4,6 +4,24 @@ from .models import *
 from django.utils.timezone import now
 from django.contrib.auth.hashers import make_password
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+class CustomTokenObtainSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # here, token is an instance of Token (from rest_framework_simplejwt.tokens)
+        token = self.get_token(self.user)
+
+
+        data['user_id'] = token['user_id']
+
+        return data
+
+
+
 
 class InterestSerializer(serializers.ModelSerializer):
     class Meta:
