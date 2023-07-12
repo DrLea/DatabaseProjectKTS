@@ -192,3 +192,6 @@ class CommentListByContentIDView(generics.ListCreateAPIView):
     def get_queryset(self):
         content = Content.objects.get(id = self.kwargs['content_id'])
         return content.comment_set.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
