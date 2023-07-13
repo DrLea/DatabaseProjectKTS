@@ -4,7 +4,8 @@ from .models import *
 from django.utils.timezone import now
 from django.contrib.auth.hashers import make_password
 
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenVerifySerializer
+from rest_framework_simplejwt.state import token_backend
 
 
 class CustomTokenObtainSerializer(TokenObtainPairSerializer):
@@ -12,7 +13,6 @@ class CustomTokenObtainSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
 
-        # here, token is an instance of Token (from rest_framework_simplejwt.tokens)
         token = self.get_token(self.user)
 
 
@@ -21,6 +21,18 @@ class CustomTokenObtainSerializer(TokenObtainPairSerializer):
         return data
 
 
+
+
+class CustomTokenVerifySerializer(TokenVerifySerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # The token is already validated by `TokenVerifySerializer`,
+        # so we can use it to retrieve the user.
+        decoded_payload = token_backend.decode(attrs['token'])
+        data['user_id'] = decoded_payload['user_id']
+
+        return data
 
 
 class InterestSerializer(serializers.ModelSerializer):

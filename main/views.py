@@ -2,13 +2,16 @@ from rest_framework import generics
 from .permissions import IsOwnerOrAdmin, IsAdminOrReadOnly
 from .serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser, AllowAny
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView
 
 
 #TOKEN
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainSerializer
 
+
+class CustomTokenVerifyView(TokenVerifyView):
+    serializer_class = CustomTokenVerifySerializer
 
 
 #USER
